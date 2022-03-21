@@ -1,12 +1,10 @@
 package config
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
 
-	"github.com/jmoiron/sqlx"
 	"gopkg.in/ini.v1"
 )
 
@@ -41,21 +39,11 @@ func LoadConfig() {
 	}
 
 	Config = ConfigList{
-		Port:    cfg.Section("web").Key("web").MustString("1323"),
-		LogFile: cfg.Section("web").Key("logfile").String(),
-
+		Port:       cfg.Section("web").Key("port").String(),
+		LogFile:    cfg.Section("web").Key("logfile").String(),
 		SQLDriver:  cfg.Section("db").Key("driver").String(),
 		DbUser:     cfg.Section("db").Key("db_user").String(),
 		DbName:     cfg.Section("db").Key("db_name").String(),
 		DbPassword: cfg.Section("db").Key("db_password").String(),
 	}
-}
-
-func Db() *sqlx.DB {
-	config := fmt.Sprintf(`%s:%s@/%s`, Config.DbUser, Config.DbPassword, Config.DbName)
-	db, err := sqlx.Open(Config.SQLDriver, config)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return db
 }
